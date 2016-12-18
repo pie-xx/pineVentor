@@ -1,0 +1,177 @@
+<html>
+<head>
+</head>
+<comp type="util" name="XML"/>
+<comp type="skey" name="SKEY"/>
+<script>
+SKEY.onKeyBack = function(){
+	uug.go("loadsave.html");
+}
+
+var SaveDB = "#DesignComps";
+var AppName = uug.getItem("#appname").substr(5);
+
+function init(){
+	uug.setOrientation(uug.getOrientation());
+
+	var listhtm = "";
+/*
+	var dirxml = uug.getDir("");
+	var files = dirxml.split("<file>");
+	for( var n=1; n < files.length; ++n ){
+		var fname = XML.tag2val("name",files[n]);
+		if( fname.lastIndexOf(".xml")==fname.length-4 ){
+			listhtm = listhtm + "<a href='javascript:importAppOnPicked(\""+fname +"\")'>"+fname+"</a><br/>";
+		}
+	}
+	LIST.innerHTML = listhtm;
+*/
+}
+function barcode(){
+	uug.goBarcode( "onSuccess");
+}
+function onSuccess(val){
+	SRCURL.value = val;
+}
+function loadApp(){
+	var url = SRCURL.value;
+	if( url!="" ){
+		var p = url.lastIndexOf("/");
+		importName = url.substring(p+1);
+		uug.sendHttpContent("GET", url, "", "", "Callback('import')",'import',"","");
+	}
+}
+function Callback(eid){
+	var value = uug.getCache(eid);
+	
+		var tags = value.split("<comps>");
+		if( tags.length < 2 ){
+			alert("load error");
+			return "";
+		}
+		var its = tags[1].split("</comps>");
+		if(its.length < 2 ){
+			alert("load error");
+			return "";
+		}
+
+	load(its[0]);
+}
+
+function importApp(){
+	uug.pickFile("*/*", 'importAppOnPicked');
+}
+var importName ;
+function importAppOnPicked(purl){
+	var url = uug.fname2realpath(purl);
+	if( !url ){
+		url = purl;
+	}
+
+	var appbody = uug.fread(url);
+	importName = pickUp(appbody,"<appname>","</appname>");
+	if( importName=="" ){
+		var p = url.lastIndexOf("/");
+		importName = url.substring(p+1).replace(".xml","");
+	}
+	load(appbody);
+}
+function importAsset(url){
+	var p = url.lastIndexOf("/");
+	importName = url.substring(p+1).replace(".xml","");
+
+	var appbody = uug.getItem(url);
+	load(appbody);
+}
+function load(appbody){
+	if( uug.getItem(toDBname(importName))!= "" ){
+		if( !window.confirm("すでに存在するアプリに上書きしますか？") ){
+			importName = InputNewAppName()
+			if( ! importName ){
+				return;
+			}
+		}
+	}
+	if( appbody=="" ){
+		alert("load error "+importName);
+		return;
+	}
+	uug.setItem("#DesignComps", appbody);
+
+	uug.setItem(toDBname(importName),appbody);
+	uug.setItem("#appname",toDBname(importName));
+	uug.go("start.html");
+}
+
+function toDBname(name){
+	return "#App/"+name;
+}
+function InputNewAppName(){
+	var fname = window.prompt("新しいアプリ名を指定してください");
+	if( fname ){
+		if( existApp(fname) ){
+			alert("すでに存在するアプリです");
+			return null;
+		}
+		return fname;
+	}
+	return null;
+}
+function existApp(fname){
+	var appbody = uug.getItem(toDBname(fname));
+	return ( appbody!="" );
+}
+function pickUp(target,from,to){
+		var sp;
+		if(from==""){
+			sp = 0;
+		}else{
+			sp = target.indexOf(from);
+		}
+		if( sp==-1 ){
+			return "";
+		}
+
+		var tstr=target.substring(sp+from.length);
+		var ep;
+		if(to==""){
+			ep = tstr.length;
+		}else{
+			ep = tstr.indexOf(to);
+		}
+		if( ep==-1 ){
+			return "";
+		}
+		return tstr.substring(0,ep);
+	};
+
+</script>
+
+<body onload="init()">
+<button onclick="javascript:uug.go('loadsave.html');" id="BtnClose" style="float:right;">X</button>
+<h2><img src='file:///android_asset/icon/ic_input_black_24dp.png' height='20' align='bottom'/> import</h2>
+<button onclick='javascript:importApp()'>file select</button>
+<button onclick='javascript:barcode()'>barcode</button>
+<br/>
+<input id="SRCURL" /><button onclick='javascript:loadApp()'>load</button><br/>
+<div id="LIST"></div>
+<h2>Samples</h2>
+<div>
+<div style='left:20px;width:90%;-webkit-border-radius:6px;border:solid 2px;padding:2px;height:60' onclick='javascript:importAsset("Sample/Books.xml")'>
+	<img src='file:///android_asset/Sample/Books.png' height='60' align='left' style='float:left' />
+	<h2 style='margin:20px;'>Books</h2>
+</div>
+<div style='left:20px;width:90%;-webkit-border-radius:6px;border:solid 2px;padding:2px;height:60' onclick='javascript:importAsset("Sample/Slot.xml")'>
+	<img src='file:///android_asset/Sample/Slot.png' height='60' align='left' style='float:left' />
+	<h2 style='margin:20px;'>Slot</h2>
+</div>
+<div style='left:20px;width:90%;-webkit-border-radius:6px;border:solid 2px;padding:2px;height:60' onclick='javascript:importAsset("Sample/Vine.xml")'>
+	<img src='file:///android_asset/Sample/Vine.png' height='60' align='left' style='float:left' />
+	<h2 style='margin:20px;'>Vine</h2>
+</div>
+<div style='left:20px;width:90%;-webkit-border-radius:6px;border:solid 2px;padding:2px;height:60' onclick='javascript:importAsset("Sample/15pazzleVine.xml")'>
+	<img src='file:///android_asset/Sample/15pazzleVine.png' height='60' align='left' style='float:left' />
+	<h2 style='margin:20px;'>15pazzle Vine</h2>
+</div>
+</body>
+</html>

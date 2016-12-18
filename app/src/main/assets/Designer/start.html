@@ -1,0 +1,680 @@
+<!-- Designer/start.html -->
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">  
+<link rel="stylesheet" href="design.css"/>
+
+<comp type="skey" name="SKEY"/>
+<script>
+SKEY.onKeyBack = function(){
+	CBoardDiv.save();
+	uug.go("/Designer/loadsave.html");
+}
+</script>
+
+<comp type="util" name="XML"/>
+<comp type="methodcontainer" name="MethodContainer"/>
+
+<script src="CBoardCtl.js"></script>
+<script>
+var CBoardDiv;
+var DBoardDiv;
+var CompEditDiv;
+
+var SaveDB = "#DesignComps";
+var NonDivHeight = 36;
+var TopHeight = 72;
+var RefComps = [];
+
+function parseCssValue( cssstr ){
+	if( cssstr.indexOf('%')!=-1){
+		return cssstr;
+	}
+	var val = parseInt(cssstr);
+	if( isNaN(val) ){
+		return "";
+	}
+	return val;
+}
+function parseCssInt( cssstr ){
+	var val = parseInt(cssstr);
+	if( isNaN(val) ){
+		return 0;
+	}
+	return val;
+}
+function dump(){
+	var dstr = "";
+	for( var n=0; n < arguments.length; ++n ){
+		dstr = dstr + arguments[n] + " ";
+	}
+	uug.logmsg("#debug",dstr);
+}
+
+
+var DBoardCtl = function(div, mctl){
+	var that = this;
+	this.div = div;
+	this.mctl = mctl;
+
+	this.onBTouch = function(e){
+		CBoard.style.display = "block";
+		if( CompEdit.isPropEvent(e.touches[0].screenX,e.touches[0].screenY) ){
+			return;
+		}
+
+		var posX = e.touches[0].pageX;
+		var posY = e.touches[0].pageY;
+
+		for( var n=0; n < that.mctl.getMemberNum(); ++n ){
+			if( that.mctl.getComp(n).div && that.mctl.getComp(n).focused ){
+				that.mctl.getComp(n).move(posX,posY);
+				that.mctl.getComp(n).focus( true );
+			}
+		}
+	};
+}
+/////////////////////////////////////////
+var CompNonDiv = function(pstr){
+	var that = this;
+	this.methods = new MethodContainer();	//event,id,param,func
+	this.id=XML.tag2val("id",pstr);
+
+	this.btn = document.createElement('button');
+	this.btn.innerText = this.id;
+	this.btn.style.float = "left";
+
+	this.focus = function(md){
+		if(md){
+			that.focused = true;
+			CompEdit.open(that);
+		}else{
+			that.focused = false;
+		}
+	};
+
+	this.onClick = function(){
+		CBoardDiv.offFocus();
+		that.focus( true );
+	};
+
+	this.toString = function(){
+		return "<comp>"+
+			XML.val2tag("id",that.id)+
+			XML.val2tag("base",that.base)+
+			that.methods.toString()+
+			"</comp>";
+	};
+	this.getPropTab = function(){
+		return "Nothing to set.";
+	};
+	
+	this.clone = function(){
+		return null;
+	};
+	this.setProp = function(pname){
+		if( pname=='Img' ){
+			that.setPropVal("Img URLを入力してください","document.body.style.backgroundImage","PWimg.innerHTML");
+			return;
+		}
+
+		alert("BoxEditor.set"+pname);
+	}
+	this.setPropVal = function(promtstr, propstr, panelstr ){
+		var propval = eval(propstr);
+		var title = window.prompt(promtstr, propval);
+		if( title!=null ){
+			eval(propstr+"='"+title+"'");
+			eval(panelstr+"='"+title+"'");
+		}
+	}
+
+	return that;
+}
+
+function getImgProp( e ){
+	var img = e.style.backgroundImage;
+	if( img.match(/data:/) ){
+		img= "";
+	}else{
+		img = img.replace("url(","").replace(")","");
+	}
+	return img;
+}
+
+var CompDiv = function(pstr){
+	var that = this;
+	this.base = "Box";
+	this.methods = new MethodContainer();	//event,id,param,func
+
+	var nwtws = document.createElement('div');
+	nwtws.className = "compdiv";
+	this.div = nwtws;
+
+	this.id=XML.tag2val("id",pstr);
+
+	this.div.innerHTML = XML.tag2val("title",pstr);
+	this.div.style.fontSize = XML.tag2val("fontsize",pstr);
+	var top = parseInt(XML.tag2val("top",pstr));
+	if( isNaN(top) ){
+		this.div.style.top = TopHeight;
+	}else{
+		this.div.style.top = top+TopHeight;
+	}
+	this.div.style.left = parseCssInt(XML.tag2val("left",pstr));
+	this.div.style.width = XML.tag2val("width",pstr);
+	this.div.style.height = XML.tag2val("height",pstr);
+	this.div.style.webkitBorderRadius = XML.tag2val("radius",pstr);
+	this.div.style.backgroundRepeat = "no-repeat";
+	this.div.style.backgroundSize="100% 100%";
+	this.div.style.backgroundImage = "url("+XML.tag2val("img",pstr)+")";
+	this.fix = parseCssInt(XML.tag2val("fix",pstr));
+
+	this.biasX = 0;
+	this.biasY = 0;
+
+	this.focus = function(md){
+		if(md){
+			that.div.style.border = "4px solid #666";
+			that.focused = true;
+			CompEdit.open(that);
+		}else{
+			that.div.style.border = "1px solid #666";
+			that.focused = false;
+		}
+		CBoardDiv.setOffFocusTimer();
+	};
+
+	this.onTouch = function(e){
+		that.biasX = e.touches[0].pageX - parseInt(e.target.style.left) ;
+		that.biasY = e.touches[0].pageY - parseInt(e.target.style.top) ;
+		CBoardDiv.offFocus();
+		that.focus( true );
+	};
+	this.onMove = function(e){
+		var posX = e.touches[0].pageX;
+		var posY = e.touches[0].pageY;
+		that.move(posX,posY);
+	};
+
+	this.move = function( x, y ){
+		if( that.fix == 0 ){
+			if(isNaN(that.biasY)){
+				that.div.style.top = y;
+			}else{
+				that.div.style.top = y - that.biasY;
+			}
+			if(isNaN(that.biasX)){
+				that.div.style.left = x;
+			}else{
+				that.div.style.left = x - that.biasX;
+			}
+			if( uug.getItem("#glid")!=0 ){
+				var sx = parseCssValue(that.div.style.left);
+				var sy = parseCssValue(that.div.style.top) - TopHeight;
+				that.div.style.top = sy - (sy % 10) + TopHeight;
+				that.div.style.left = sx - (sx % 10);
+			}
+		}
+		CBoardDiv.setOffFocusTimer();
+	};
+
+	this.focused = false;
+
+	this.toString = function(){
+		var img = getImgProp(that.div);
+		return "<comp>"+
+			XML.val2tag("id",that.id)+
+			XML.val2tag("base",that.base)+
+			XML.val2tag("fontsize",that.div.style.fontSize)+
+			XML.val2tag("title",that.div.innerHTML)+
+			XML.val2tag("width",parseCssValue(that.div.style.width))+
+			XML.val2tag("height",parseCssValue(that.div.style.height))+
+			XML.val2tag("top",parseCssValue(that.div.style.top)-TopHeight)+
+			XML.val2tag("left",parseCssValue(that.div.style.left))+
+			XML.val2tag("img",img)+
+			XML.val2tag("fix",that.fix)+
+			that.methods.toString()+
+			"</comp>";
+	};
+		
+	this.getPropTab = function(){
+		var Top = parseCssValue(that.div.style.top) - TopHeight;
+		var Fix = that.strFix();
+		var img = getImgProp(that.div);
+		
+		return '<button onClick="CompEdit.setProp(\'Title\')">Text</button> <span id="PWtitle">'+that.div.innerHTML+'</span>'+
+				'<button onClick="CompEdit.setProp(\'FontSize\')">FontSize</button> <span id="PWfontsize">'+that.div.style.fontSize+'</span><br/>'+
+				'<button onClick="CompEdit.ce.setFix()" id="PWfix" style="padding:0">'+Fix+'</button>'+
+				'<button onClick="CompEdit.setProp(\'Width\')">Width</button> <span id="PWwidth">'+that.div.style.width+'</span>'+
+				'<button onClick="CompEdit.setProp(\'Height\')">Height</button> <span id="PWheight">'+that.div.style.height+'</span>'+
+				'<button onClick="CompEdit.setProp(\'Top\')">Top</button> <span id="PWtop">'+ Top +'</span>'+
+				'<button onClick="CompEdit.setProp(\'Left\')">Left</button> <span id="PWleft">'+that.div.style.left+'</span><br/>'+
+				'<button onClick="CompEdit.setProp(\'Img\')">image</button> '+
+				'<button onClick="CompEdit.ce.pickFile()">pick file</button> <span id="PWimg">'+img+'</span><br/><br/><br/><br/>';
+	}
+
+	this.pickFile = function(){
+		uug.pickFile("*/*","CompEdit.ce.onPicked");
+	};
+	this.onPicked = function(url){
+		that.div.style.backgroundRepeat = "no-repeat";
+		that.div.style.backgroundSize="100% 100%";
+		that.div.style.backgroundImage = "url("+url+")";
+		PWimg.innerText = url;
+	};
+
+	this.strFix = function(){
+		var str = "<img src='file:///android_asset/icon/ic_lock_open_black_24dp.png' height='24'/>";
+		if( that.fix != 0 ){
+			str = "<img src='file:///android_asset/icon/ic_lock_black_24dp.png' height='24'/>";
+		}
+		return str;
+	}
+	
+	this.setFix = function(){
+		if( that.fix == 0 ){
+			that.fix = 1;
+		}else{
+			that.fix = 0;
+		}
+		PWfix.innerHTML = that.strFix();
+	}
+	
+	this.setProp = function(pname){
+		if( pname=='Title' ){
+			that.setPropVal("Textを入力してください","that.div.innerHTML","PWtitle.innerHTML");
+			return;
+		}
+		if( pname=='FontSize' ){
+			that.setPropVal("FontSizeを入力してください","that.div.style.fontSize","PWfontsize.innerHTML");
+			return;
+		}
+		if( pname=='Width' ){
+			that.setPropVal("Widthを入力してください","that.div.style.width","PWwidth.innerHTML");
+			return;
+		}
+		if( pname=='Height' ){
+			that.setPropVal("Heightを入力してください","that.div.style.height","PWheight.innerHTML");
+			return;
+		}
+		if( pname=='Top' ){
+			var title = window.prompt("Topを入力してください", parseInt(that.div.style.top) - TopHeight);
+			if( title!=null ){
+				that.div.style.top = parseCssInt(title) + TopHeight;
+				PWtop.innerHTML = parseCssInt(title);
+			}
+			return;
+		}
+		if( pname=='Left' ){
+			that.setPropVal("Leftを入力してください","that.div.style.left","PWleft.innerHTML");
+			return;
+		}
+		if( pname=='Radius' ){
+			that.setPropVal("Radiusを入力してください","that.div.style.WebkitBorderRadius","PWradius.innerHTML");
+			return;
+		}
+		if( pname=='Img' ){
+			that.setPropVal("Img URLを入力してください","that.div.style.backgroundImage","PWimg.innerHTML");
+			return;
+		}
+		if( pname=='Fix' ){
+			that.setPropVal("Fixを入力してください","that.fix","PWfix.innerHTML");
+			return;
+		}
+		alert("BoxEditor.set"+pname);
+	}
+
+	this.setPropVal = function(promtstr, propstr, panelstr ){
+		var propval = eval(propstr);
+		var title = window.prompt(promtstr, propval);
+		if( title!=null ){
+			eval(propstr+"='"+title+"'");
+			eval(panelstr+"='"+title+"'");
+		}
+	}
+	
+	this.clone = function() {
+		var newId = CBoardDiv.getUniqId(that.base);
+		var comp = new BoxEditor("<id>"+newId+"</id>");
+		comp.div.innerHTML = splitBra(that.div.innerHTML)+"("+newId+")";
+		comp.div.style.fontSize = that.div.style.fontSize;
+		comp.div.style.top = parseCssInt(that.div.style.top)+10;
+		comp.div.style.left = parseCssInt(that.div.style.left)+10;
+		comp.div.style.width = parseCssValue(that.div.style.width);
+		comp.div.style.height = parseCssValue(that.div.style.height);
+//		comp.div.style.WebkitBorderRadius = that.div.style.WebkitBorderRadius;
+		comp.div.style.backgroundImage = that.div.style.backgroundImage;
+		comp.methods = that.methods.clone();
+		return comp;
+	}
+	
+	return that;
+}
+///system
+function splitBra(str){
+	var bra = str.match(/[^(]*/);
+	if( bra == null )
+		return "";
+	return bra;
+}
+
+function creatScaleDiv(msg){
+	var nwtws = document.createElement('div');
+	nwtws.className = "scale";
+	nwtws.innerHTML = msg;
+	nwtws.style.borderTop = "thin solid #808080";
+	nwtws.style.position = "absolute";
+	nwtws.style.zIndex = 5;
+	nwtws.style.color = "#808080";
+	return nwtws;
+}
+
+function createScale(){
+	for( var n=0; n < window.innerHeight; n=n+100 ){
+		var scale = creatScaleDiv( n );
+		scale.style.top = n+TopHeight;
+		DBoard.appendChild( scale );
+	}
+	scale = creatScaleDiv( window.innerHeight );
+	scale.style.top = window.innerHeight+TopHeight;
+	scale.style.width = "100%";
+	DBoard.appendChild( scale );
+	scale = creatScaleDiv( window.innerWidth );
+	scale.style.position = "fixed";
+	scale.style.top = window.innerHeight+TopHeight;
+	scale.style.left = window.innerWidth;
+	scale.style.borderLeft = "thin solid";
+	DBoard.appendChild( scale );
+	DBoard.style.height = window.innerHeight * 1.5;
+}
+
+function onNonDivClick(id){
+	alert(id);
+}
+
+var AppName = uug.getItem("#appname").substr(5);
+
+window.addEventListener("load", function(e) {
+	window.removeEventListener("load", arguments.callee, false);
+
+	NonDivBoard.style.height = TopHeight;
+	loadComponents();
+
+	if( AppName==="" || AppName===undefined){
+		AppName="*NewApp*";
+	}
+	uug.setActionbarTitle("pineVentor/"+AppName);
+
+	CBoardDiv = new CBoardCtl(CBoard);
+	DBoardDiv = new DBoardCtl(DBoard, CBoardDiv);
+	CompEdit = new CompEditBuilder(CompEditWnd);
+
+	CBoardDiv.load();
+
+	for( var n=0; n < CBoardDiv.getMemberNum(); ++n ){
+		var ce = CBoardDiv.getComp(n);
+		if( ce.div ){
+			DBoard.appendChild( ce.div );
+			ce.div.addEventListener("touchstart", ce.onTouch, true);
+			ce.div.addEventListener("touchmove", ce.onMove, true);
+		}else{
+			NonDivBoard.appendChild( ce.btn );
+			ce.btn.addEventListener("click", ce.onClick, false);
+		}
+	}
+	DBoard.addEventListener("touchstart",DBoardDiv.onBTouch, false);
+
+	setTimeout(createScale,500);
+}, false);
+
+
+function loadComponents(){
+	uug.setOrientation(-1);
+	var alist = uug.getAssetList("Designer").split('<asset>');
+	var compsel = "";
+	for( var n=1; n < alist.length; ++n ){
+		var builder = XML.tag2val("name",alist[n]);
+		if( builder.indexOf('Editor.js')!=-1){
+			var src = uug.getItem("Designer/"+builder);
+			eval( src );
+			var compname = builder.split('Editor.js')[0];
+			var cat = setRefComps(compname);
+			var compbtn = document.createElement('div');
+			compbtn.style.float='left';
+			compbtn.innerHTML = "<button onclick=\"CBoardDiv.onAddComp('"+compname+"')\">"+compname+"</button>";
+			if( cat=="Web" ){
+				HTMLListTab.appendChild(compbtn);
+			}else
+			if( cat=="Sensor" ){
+				SensorListTab.appendChild(compbtn);
+			}else
+			if( cat=="Comminucation" ){
+				ComminucationListTab.appendChild(compbtn);
+			}else{
+				if( compname!="System" ){
+					OtherListTab.appendChild(compbtn);
+				}
+			}
+		}
+	}
+}
+
+function setRefComps(compname){
+	var rtsrc = uug.getItem("Appli/"+compname+"Builder.js");
+	var rtline = rtsrc.split("\n");
+	var funcs = [];
+	var fxml = "";
+	var cat = "";
+	for( var n=0; n < rtline.length; ++n ){
+		var result = rtline[n].match(/that\.(\w+)\s*=\s*function(\([^)]*\))/);
+		if( result ){
+			funcs.push(result[1]+result[2]);
+			fxml = fxml + "<L2><id>"+result[1]+result[2]+"</id></L2>";
+		}
+		var result2 = rtline[n].match(/<cat>([^<]*)</);
+		if( result2 ){
+			cat = result2[1];
+		}
+	}
+	RefComps[ compname ] = fxml ;
+	return cat;
+}
+
+</script>
+</head>
+
+<body>
+<div id="CBoard">
+	<button onClick="javascript:setting()" style='float:left;'>≡</button>
+	<span>
+	Component 
+	<button onClick="CBoardDiv.selectCompType()" >create</button><button onClick="dispMlist()" >list</button>
+	</span>
+	<script>
+	function dispMlist(){
+		CBoardDiv.offFocus();
+		var comps = CBoardDiv.getCompXml2().split(/<L1>/);
+		var mhtml = "";
+		for( var n=1; n < comps.length; ++n ){
+			var compid = XML.tag2val("id",comps[n]);
+			mhtml = mhtml + "<h2 onClick=\"openComp('"+compid+"')\">"+compid+"</h2><div style='margin-left:20px;'>";
+			var mthods = comps[n].split("<L2>");
+			for( var m=1; m < mthods.length; ++m ){
+				var mthodid = XML.tag2val("id",mthods[m]);
+				mhtml = mhtml + "<h3 onClick=\"meMlist('"+compid+"','"+(m-1)+"')\">"+mthodid+"</h2>";
+			}
+			mhtml = mhtml + "</div>";
+		}
+		MlistTab.innerHTML = mhtml;
+		MlistWnd.style.display = "block";
+	}
+	function closeMlist(){
+		MlistWnd.style.display = "none";
+	}
+	function openComp(cid){
+		closeMlist();
+		CBoardDiv.offFocus();
+		CBoardDiv.getCompById( cid ).focus(true);	
+	}
+	function meMlist(cid,mid){
+		openComp(cid);
+		CompEdit.setTab('method');
+		CompEdit.setMEfbody(mid);
+	}
+
+	</script>
+
+	<!--button onClick="javascript:closeMenu()" style="float:right;"> X </button-->
+	<button onClick="javascript:Run()" style="float:right;">Run</button>
+	<script>
+	function closeMenu(){
+		CBoardDiv.save();
+		CBoard.style.display = "none";
+	}
+	function Run(){
+		CBoardDiv.save();
+		uug.go("/Appli/start.html");
+	}
+	function loadsave(){
+		CBoardDiv.save();
+		uug.go("loadsave.html");
+	}
+	function setting(){
+		CBoardDiv.save();
+		dispZOOMPW();
+		dispGlidPW();
+		SettingWnd.style.display="block";
+	}
+
+	function zoom(){
+		if( uug.getZoomFlg() ){
+			uug.setZoomFlg(false);
+		}else{
+			uug.setZoomFlg(true);
+		}
+		dispZOOMPW();
+	}
+	function dispZOOMPW(){
+		if( uug.getZoomFlg() ){
+			ZOOMPW.innerHTML = "<b>ZOOM ON</b>";
+		}else{
+			ZOOMPW.innerText = "ZOOM OFF";
+		}
+	}
+
+	function glid(){
+		if( uug.getItem("#glid")!=0 ){
+			uug.setItem("#glid",0);
+		}else{
+			uug.setItem("#glid",1);
+		}
+		dispGlidPW();
+	}
+	function dispGlidPW(){
+		if( uug.getItem("#glid")=="" ){
+			uug.setItem("#glid",1);
+		}
+		if( uug.getItem("#glid")!=0 ){
+			GlidPW.innerHTML = "<b>Glid ON</b>";
+		}else{
+			GlidPW.innerText = "Glid OFF";
+		}
+	}
+function InputSaveAsName(){
+	for(;;){
+		var fname = window.prompt("保存名を指定してください", AppName);
+		if( fname==null ){
+			return null;
+		}
+		if( existApp(fname) ){
+			alert("すでに存在するアプリ名です");
+			return null;
+		}else{
+			return fname;
+		}
+	}
+}
+function saveAs(){
+	var fname = InputSaveAsName();
+	if( fname ){
+		var appbody = uug.getItem("#DesignComps");
+		var p = appbody.indexOf("</appname>");
+		if( p == -1 ){
+			appbody = "<comps><appname>"+fname+"</appname>"+ appbody.substring( 7 );
+		}else{
+			appbody = "<comps><appname>"+fname+"</appname>"+ appbody.substring( p + 10 );
+		}
+		uug.setItem(toDBname(fname), appbody);
+		alert(fname+" is saved.");
+	}
+}
+
+function exportApp(){
+	var fname = window.prompt("エクスポート名を指定してください",AppName);
+	if( fname ){
+		var appbody = uug.getItem("#DesignComps");
+		var p = appbody.indexOf("</appname>");
+		if(p != -1 ){
+			appbody = "<comps><appname>"+ fname +"</appname>"+appbody.substring( p + 10 );
+		}else{
+			appbody = "<comps><appname>"+ fname +"</appname>"+ appbody.substring( 7 );
+		}
+		uug.fwrite(toEXname(fname), appbody);
+		alert(fname+" is exported.");
+	}
+}
+
+function existApp(fname){
+	var appbody = uug.getItem(toDBname(fname));
+	return ( appbody!="" );
+}
+
+function toDBname(name){
+	return "#App/"+name;
+}
+
+function toEXname( fname ){
+	return fname+".xml";
+}
+	</script>
+</div>
+<div>
+<div id="NonDivBoard">
+<div style="height:36px"></div>
+</div>
+<div id="SettingWnd">
+	<button onclick='SettingWnd.style.display="none"' style="float:right;">x</button>
+		<div class="settingdiv" id="ZOOMPW" onclick="javascript:zoom()">Zoom</div>
+		<div class="settingdiv" id="GlidPW" onclick="javascript:glid()">Glid</div>
+		<hr/>
+		<div class="settingdiv" onclick="javascript:saveAs()">Save as...</div>
+		<div class="settingdiv" onclick="javascript:exportApp()">Export...</div>
+		<hr/>
+		<div class="settingdiv" onclick="javascript:loadsave()">Exit</div>
+</div>
+<div id="DBoard">
+<div id="AppMenuWnd" >
+	<button onclick='AppEditWnd.close()' style="float:right;">x</button>
+	<div id="AppMenuTab">
+	</div>
+</div>
+<div id="CompWnd" >
+	<button onclick='CompWnd.style.display="none"' style="float:right;">x</button>
+	<h4>Select Component Type.</h4>
+	<b>HTML parts</b>	<div id="HTMLListTab"></div><br clear="all"/>
+	<b>Sensors</b>	<div id="SensorListTab"></div><br clear="all"/>
+	<b>Comminucations</b>	<div id="ComminucationListTab"></div><br clear="all"/>
+	<b>Others</b>	<div id="OtherListTab"></div><br clear="all"/>
+</div>
+<div id="MlistWnd" style="height:320px;overflow:scroll;display:none;position:fixed;width:80%;top:140;left:10%;z-index:10000;background-color:White;border:1px solid #666;padding:4px;">
+<button onclick='closeMlist()' style="float:right;">x</button>
+<div id="MlistTab" style='margin:20px'></div>
+</div>
+<include src="CompEditTab.inc"/>
+
+</div>
+</div>
+</body>
+</html>

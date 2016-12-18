@@ -1,0 +1,181 @@
+<!-- Appli/start.html -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+@charset "UTF-8";
+
+body {
+	margin:0;
+	padding:0;
+	background-color:#eeeeee;
+}
+
+.compdiv {
+z-index:10;
+position: absolute;
+background-color:white;
+color:black;  
+border:1px solid #666;
+padding:4px;
+}
+.buttondiv {
+	z-index:10;
+	position: absolute;
+    background-color:lightgrey;
+    color:black;  
+    border:1px solid #666;
+    padding:4px;
+	-webkit-border-radius: 10px;
+}
+.noborderdiv {
+	z-index:10;
+	position: absolute;
+    background-color:tranceparent;
+    border:none;
+    padding:0;
+}
+
+#DBoard {
+	width:100%;
+	margin:0;
+	padding:0;
+//	height:1200px;
+}
+</style>
+
+<comp type="skey" name="SKEY"/>
+<script>
+SKEY.onKeyBack = function(){
+	cSys.onKeyBack();
+};
+SKEY.onKeyVup = function (){
+	cSys.onKeyVup();
+};
+SKEY.onKeyVdown = function (){
+	cSys.onKeyVdown();
+};
+SKEY.onKeySearch = function (){
+	cSys.onKeySearch();
+};
+</script>
+<comp type="util" name="XML"/>
+<comp type="methodcontainer" name="MethodContainer"/>
+
+<script>
+var AppName = uug.getItem("#appname").substr(5);
+
+var CBoardCtl = function(div){
+	var that = this;
+	this.div = div;
+
+	this.Members= [];
+
+	this.assign = function(comp){
+		that.Members.push(comp);
+	};
+
+	this.offFocus= function(){
+		for( var n=0; n < that.Members.length; ++n ){
+			that.Members[n].focus( false );
+		}
+	};
+
+	this.getMemberNum= function(){
+		return that.Members.length;
+	};
+
+	this.getComp= function( n ){
+		return that.Members[ n ];
+	};
+
+	this.load = function(){
+		that.Members= [];
+		var sstr = uug.getItem("#DesignComps");
+		var compstrs = sstr.split("<comp>");
+		for( var n=1; n < compstrs.length; ++n ){
+			var ce = createCom(compstrs[n]);
+			that.assign( ce );
+		}
+	};
+}
+///////////Components
+function createCom(pstr){
+	var base = XML.tag2val("base",pstr);
+	return eval('new '+base+'Builder(pstr)');
+}
+
+var NonDivBuilder = function(pstr){
+	var that = this;
+//	that.isTab = false;
+	that.methods = new MethodContainer();	//event,id,param,func
+	that.methods.load(pstr);
+	that.id = XML.tag2val("id",pstr);
+	return that;
+}
+
+///////////////////////////////////////////////////
+window.addEventListener("load", function(e) {
+	window.removeEventListener("load", arguments.callee, false);
+
+	var alist = uug.getAssetList("Appli").split('<asset>');
+	for( var n=1; n < alist.length; ++n ){
+		var builder = XML.tag2val("name",alist[n]);
+		if( builder.indexOf('Builder.js')!=-1 ){
+			eval(uug.getItem("Appli/"+builder));
+		}
+	}
+
+	var AppName = uug.getItem("#appname").substr(5);
+	if( AppName==="" || AppName===undefined){
+		AppName="*NewApp*";
+	}
+	uug.setActionbarTitle("pineVentor/"+AppName);	
+	DBoard.style.height = window.innerHeight;
+
+	DBoardDiv = new CBoardCtl(DBoard);
+	DBoardDiv.load();
+
+	for( var n=0; n < DBoardDiv.getMemberNum(); ++n ){
+		var ce = DBoardDiv.getComp(n);
+		if( ce.div ){
+			DBoard.appendChild( ce.div );
+		}
+		eval(ce.id+"=ce;");
+		for( var m = 0; m < ce.methods.length(); ++m ){
+			var param = "";
+			if(ce.methods.get(m).param!=undefined){
+				param = ce.methods.get(m).param;
+			}
+			var prog = "ce."+ce.methods.get(m).fname+"=function("+param+"){"+
+						"var my="+ce.id+"; uug.cf('"+ce.id+"."+ce.methods.get(m).fname+"');"+
+						ce.methods.get(m).fbody+"}";
+			eval(prog);
+			if( ce.div ){
+				if(ce.tag){
+				uug.logmsg("#debug",'tag '+ce.id+':'+ce.methods.get(m).event+' efunc='+ce.methods.get(m).fname);
+					ce.tag.addEventListener(ce.methods.get(m).event, eval("ce."+ce.methods.get(m).fname), true);
+				}else{
+				uug.logmsg("#debug",'div '+ce.id+':'+ce.methods.get(m).event+' efunc='+ce.methods.get(m).fname);
+					ce.div.addEventListener(ce.methods.get(m).event, eval("ce."+ce.methods.get(m).fname), true);
+				}
+			}
+		}
+		if( ce.id!="cSys" && ce.init ){
+			ce.init();
+		}
+	}
+	
+	cSys.setImage(cSys.img);
+	cSys.init();
+
+}, false);
+
+</script>
+</head>
+
+<body>
+<div id="DBoard">
+</div>
+</body>
+</html>

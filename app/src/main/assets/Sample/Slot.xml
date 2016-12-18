@@ -1,0 +1,26 @@
+<comps><comp><id>cSys</id><base>System</base><img></img><methods><method><event></event><fname>init</fname><param></param><fbody>cTimerA.setInterval( 100 );
+my.emoji=["😠","😩","😲","😵","😒","😤",
+"😝","😘","😚","😷","😳","😃","😅"];
+
+</fbody></method><method><event></event><fname>onKeyBack</fname><param></param><fbody>uug.go('/Designer/start.html');</fbody></method><method><event></event><fname>getRndEmoji</fname><param></param><fbody>var n=Math.random()*my.emoji.length;
+n=Math.floor(n);
+
+return my.emoji[n];</fbody></method></methods></comp><comp><id>cBoxA</id><base>Box</base><fontsize>72px</fontsize><title>😠</title><width>100</width><height>100</height><top>50</top><left>20</left><img></img><fix>0</fix><methods><method><event></event><fname>init</fname><param></param><fbody>my.setBackgroundColor("transparent");
+my.setCss("border","none");
+my.t=false;</fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>my.t=false;
+
+</fbody></method><method><event></event><fname>chgImg</fname><param></param><fbody>if( my.t  ){
+my.setText(cSys.getRndEmoji());
+}</fbody></method><method><event></event><fname>start</fname><param></param><fbody>my.t=true;</fbody></method></methods></comp><comp><id>cTimerA</id><base>Timer</base><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event></event><fname>onTimer</fname><param></param><fbody>cBoxA.chgImg();
+cBoxB.chgImg();
+cBoxC.chgImg();</fbody></method></methods></comp><comp><id>cBoxB</id><base>Box</base><fontsize>72px</fontsize><title>😍</title><width>100</width><height>100</height><top>50</top><left>130</left><img></img><fix>0</fix><methods><method><event></event><fname>init</fname><param></param><fbody>my.setBackgroundColor("transparent");
+my.setCss("border","none");
+my.t=false;</fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>my.t=false;</fbody></method><method><event></event><fname>chgImg</fname><param></param><fbody>if( my.t  ){
+my.setText(cSys.getRndEmoji());
+}</fbody></method><method><event></event><fname>start</fname><param></param><fbody>my.t=true;</fbody></method></methods></comp><comp><id>cBoxC</id><base>Box</base><fontsize>72px</fontsize><title>😢</title><width>100</width><height>100</height><top>50</top><left>240</left><img></img><fix>0</fix><methods><method><event></event><fname>init</fname><param></param><fbody>my.setBackgroundColor("transparent");
+my.setCss("border","none");
+my.t=false;</fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>my.t=false;</fbody></method><method><event></event><fname>chgImg</fname><param></param><fbody>if( my.t  ){
+my.setText(cSys.getRndEmoji());
+}</fbody></method><method><event></event><fname>start</fname><param></param><fbody>my.t=true;</fbody></method></methods></comp><comp><id>cButtonA</id><base>Button</base><fontsize></fontsize><title>Start</title><width></width><height></height><top>210</top><left>240</left><img></img><fix>0</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>click</event><fname>onClick</fname><param>te</param><fbody>cBoxA.start();
+cBoxB.start();
+cBoxC.start();</fbody></method></methods></comp></comps>

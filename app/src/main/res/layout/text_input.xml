@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:visibility="visible"
+    tools:context=".TextInputActivity" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="38dp" >
+
+        <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:visibility="visible" />
+
+        <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="79dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.22" />
+
+        <Button
+            android:id="@+id/pastebtn"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Paste" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:text="123 chars" />
+
+        <Button
+            android:id="@+id/enterbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Enter"
+            android:textSize="6pt" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:ems="10"
+        android:gravity="top|left"
+        android:inputType="textMultiLine"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="horizontal|vertical" >
+
+        <requestFocus />
+    </EditText>
+
+</LinearLayout>

@@ -1,0 +1,25 @@
+<html>
+<include src="skey.inc"/>
+<script>
+function putVersion(){
+	VER.innerText=uug.getVersionName();
+}
+</script>
+<body onload="putVersion()">
+Version <span id="VER"></span><br/>
+PineVentor は<a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>で配布されている以下のソフトを使用しています。<br/>
+<br/>
+Twitter4J: <a href="http://twitter4j.org/ja/index.html">http://twitter4j.org/ja/index.html</a><br/>
+zxing Barcode Scanner: <a href="https://github.com/zxing/zxing/tree/master/android">https://github.com/zxing/zxing/tree/master/android</a><br/>
+<br/>
+また、<a href="http://creativecommons.org/licenses/by/4.0/">Attribution 4.0 International</a> licenseで配布されている以下のアイコンの一部を使用しています。<br/>
+<a href="https://github.com/google/material-design-icons">https://github.com/google/material-design-icons</a><br/>
+<br/>
+	<button onclick="javascript:start()">戻る</button>
+	<script>
+	function start(){
+		uug.go("start.html");
+	}
+	</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="jp.co.aplabs.htmlbase"
+    android:versionCode="9"
+    android:versionName="1.09" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="16" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher_pine"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+  		<activity
+			android:name=".StartOAuth2GoogleActivity">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".OAuth2GoogleActivity" />
+        <activity
+            android:name="jp.co.aplabs.htmlbase.HtmlBaseActivity"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter >
+		        <action android:name="android.intent.action.VIEW" />
+		        <category android:name="android.intent.category.DEFAULT" />
+		        <category android:name="android.intent.category.BROWSABLE" />
+		        <data
+		            android:host="twitter"
+		            android:scheme="pie" />
+	        </intent-filter>
+            </activity>
+        <activity android:name=".TwitterOAuthActivity" >
+        </activity>
+        <activity android:name="TextInputActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity android:name="PicMonActivity"
+                  android:label="@string/app_name"
+                  android:screenOrientation="landscape"
+                  android:configChanges="keyboardHidden|orientation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity android:name="QrActivity"
+                  android:label="@string/app_name"
+                  android:screenOrientation="landscape"
+                  android:configChanges="keyboardHidden|orientation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        </application>
+    <provider
+        android:authorities="com.example"
+    android:name="UserContentProvider"
+    android:exported="false">
+</provider>
+</manifest>

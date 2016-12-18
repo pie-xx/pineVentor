@@ -1,0 +1,235 @@
+<html>
+<head>
+</head>
+<comp type="util" name="XML"/>
+<comp type="skey" name="SKEY"/>
+<script>
+SKEY.onKeyBack = function(){
+	onFihish();
+}
+
+var SaveDB = "#DesignComps";
+var AppName = uug.getItem("#appname").substr(5);
+
+function init(){
+	var bartitle = "pineVentor/"+AppName;
+	if( AppName==="" || AppName===undefined){
+		bartitle="pineVentor/*NewApp*";
+		BtnClose.style.display = "none";
+		BtnExport.style.display = "none";
+		SKEY.onKeyBack = function(){alert("Put a new button.")};
+	}
+	uug.setActionbarTitle(bartitle);
+	makeList();
+	var fname = uug.getItem("#appname");
+	if( fname!=="" ){
+		var appbody = uug.getItem("#DesignComps");
+		uug.setItem(fname, appbody);
+	}
+	
+//	dispZOOMPW();
+//	dispGlidPW();
+}
+
+function makeList(){
+	var aliststr = uug.listItems("title like '#App/%'");
+
+	var alist = aliststr.split("<item>");
+	var ahtml = "<div width='100%'>";
+	for( var n=1; n < alist.length; ++n ){
+		var aname = XML.tag2val("name",alist[n]).substr(5);
+		ahtml = ahtml + "<div style='left:20px;width:90%;-webkit-border-radius:6px;border:solid 2px;margin:4px;'>"+
+							"<button onclick='javascript:del(\""+aname+"\")' style='float:left'>"+
+							"<img src='file:///android_asset/icon/ic_delete_black_24dp.png' height='24' alt='delete' align='middle'/>"+
+							"</button>"+
+							"<div style='width:60%;margin:4px;padding:4px;float:left' onclick='javascript:load(\""+aname+"\")'>"+aname+"</div>"+
+							"<div style='float:right'><button onclick='javascript:run(\""+aname+"\")'>run</button></div>"+
+						"<br clear='all'/></div>";
+	}
+
+	AppListWnd.innerHTML = ahtml+"</table>";
+}
+
+function InputNewAppName(){
+	var fname = window.prompt("新しいアプリ名を指定してください");
+	if( fname ){
+		if( existApp(fname) ){
+			alert("すでに存在するアプリです");
+			return null;
+		}
+		return fname;
+	}
+	return null;
+}
+function InputSaveAsName(){
+	for(;;){
+		var fname = window.prompt("保存名を指定してください", AppName);
+		if( fname==null ){
+			return null;
+		}
+		if( existApp(fname) ){
+			alert("すでに存在するアプリ名です");
+			return null;
+		}else{
+			return fname;
+		}
+	}
+}
+function saveAs(){
+	var fname = InputSaveAsName();
+	if( fname ){
+		var appbody = uug.getItem("#DesignComps");
+		var p = appbody.indexOf("</appname>");
+		if( p == -1 ){
+			appbody = "<comps><appname>"+fname+"</appname>"+ appbody.substring( 7 );
+		}else{
+			appbody = "<comps><appname>"+fname+"</appname>"+ appbody.substring( p + 10 );
+		}
+		uug.setItem(toDBname(fname), appbody);
+		makeList();
+		alert(fname+" is saved.");
+	}
+}
+function load(name){
+	var fname = uug.getItem("#appname");
+	uug.logmsg("#debug",fname);
+	if( fname!=="" ){
+		var appbody = uug.getItem(toDBname(name));
+		var p = appbody.indexOf("</appname>");
+		if(p != -1 ){
+			appbody = "<comps>"+ appbody.substring( p + 10 );
+		}
+		uug.setItem("#DesignComps", appbody);
+		uug.setItem("#appname",toDBname(name));
+		uug.go("start.html");
+	}
+}
+function newapp(){
+	var fname = InputNewAppName();
+	if( fname ){
+		var newbody = "<comps></comps>";
+		uug.setItem("#DesignComps",newbody);
+		uug.setItem(toDBname(fname),newbody);
+		uug.setItem("#appname",toDBname(fname));
+		uug.go("start.html");
+	}
+}
+function run(name){
+	var appbody = uug.getItem(toDBname(name));
+	uug.setItem("#DesignComps", appbody);
+	uug.setItem("#appname",toDBname(name));
+	uug.go("/Appli/start.html");
+}
+function del(name){
+	if( confirm("Delete '"+name+"'?") ){
+		uug.removeItem(toDBname(name));
+		makeList();
+	}
+	return false;
+}
+
+function existApp(fname){
+	var appbody = uug.getItem(toDBname(fname));
+	return ( appbody!="" );
+}
+
+function toDBname(name){
+	return "#App/"+name;
+}
+/*
+function dispZOOMPW(){
+	if( uug.getZoomFlg() ){
+		ZOOMPW.innerText = "ON";
+	}else{
+		ZOOMPW.innerText = "OFF";
+	}
+}
+
+function zoom(){
+	if( uug.getZoomFlg() ){
+		uug.setZoomFlg(false);
+	}else{
+		uug.setZoomFlg(true);
+	}
+	dispZOOMPW();
+}
+
+function glid(){
+	if( uug.getItem("#glid")!=0 ){
+		uug.setItem("#glid",0);
+	}else{
+		uug.setItem("#glid",1);
+	}
+	dispGlidPW();
+}
+function dispGlidPW(){
+	if( uug.getItem("#glid")=="" ){
+		uug.setItem("#glid",1);
+	}
+	if( uug.getItem("#glid")!=0 ){
+		GlidPW.innerText = "ON";
+	}else{
+		GlidPW.innerText = "OFF";
+	}
+}
+*/
+function importApp(){
+	uug.go("import.html");
+}
+
+function exportApp(){
+	var fname = window.prompt("エクスポート名を指定してください",AppName);
+	if( fname ){
+		var appbody = uug.getItem("#DesignComps");
+		var p = appbody.indexOf("</appname>");
+		if(p != -1 ){
+			appbody = "<comps><appname>"+ fname +"</appname>"+appbody.substring( p + 10 );
+		}else{
+			appbody = "<comps><appname>"+ fname +"</appname>"+ appbody.substring( 7 );
+		}
+		uug.fwrite(toEXname(fname), appbody);
+		alert(fname+" is exported.");
+	}
+}
+function toEXname( fname ){
+	return fname+".xml";
+}
+function onFihish(){
+	if( confirm('exit?')){
+		uug.finish()
+	}
+}
+</script>
+
+<body onload="init()">
+<button onclick="javascript:onFihish();" id="BtnClose" style="float:right;">finish</button>
+<!--
+<h2><img src='file:///android_asset/icon/ic_settings_black_24dp.png' height='28'> Setting</h2>
+<button onclick="javascript:zoom()">
+	<img src='file:///android_asset/icon/ic_pageview_black_24dp.png' height='20' align='bottom'/> ZOOM
+</button> <span id="ZOOMPW">ON</span>
+<button onclick="javascript:glid()">
+	<img src='file:///android_asset/icon/ic_grid_on_black_24dp.png' height='20' align='bottom'/> Glid
+</button> <span id="GlidPW">ON</span>
+-->
+<button onclick="javascript:importApp()">
+	<img src='file:///android_asset/icon/ic_input_black_24dp.png' height='20' align='bottom'/> import
+</button>
+<!--
+<button onclick="javascript:exportApp()" id="BtnExport">
+	<img src='file:///android_asset/icon/output.png' height='20' align='bottom'/>export
+</button>
+-->
+<button onclick="javascript:newapp()">
+	<img src='file:///android_asset/icon/ic_add_circle_black_24dp.png' height='20' align='bottom'/>new
+</button>
+<!--
+<button onclick="javascript:saveAs()">
+	<img src='file:///android_asset/icon/ic_add_circle_outline_black_24dp.png' height='20' align='bottom'/>save
+</button>
+-->
+<br/>
+<h2><img src='file:///android_asset/icon/ic_apps_black_24dp.png' height='28'> Application List</h2>
+<div id="AppListWnd"></div>
+</body>
+</html>

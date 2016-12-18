@@ -1,0 +1,22 @@
+<comps><comp><id>cSys</id><base>System</base><img></img><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event></event><fname>onKeyBack</fname><param></param><fbody>uug.go('/Designer/start.html');</fbody></method></methods></comp><comp><id>cButtonA</id><base>Button</base><fontsize></fontsize><title>Barcode</title><width>80</width><height>80</height><top>60</top><left>220</left><img></img><fix>0</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>click</event><fname>onClick</fname><param>te</param><fbody>cBarcodeA.open();</fbody></method></methods></comp><comp><id>cBarcodeA</id><base>Barcode</base><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event></event><fname>onSuccess</fname><param>val</param><fbody>cBoxInfo.setText("searching "+val );
+
+cHttpA.open( "https://www.googleapis.com/books/v1/volumes?q=isbn:"+ val
+// +"&amp;key={API KEY}"
+);
+</fbody></method></methods></comp><comp><id>cBoxInfo</id><base>Box</base><fontsize>24px</fontsize><title>cBoxInfo</title><width></width><height></height><top>310</top><left>10</left><img></img><fix>0</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody></fbody></method></methods></comp><comp><id>cHttpA</id><base>Http</base><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event></event><fname>onSuccess</fname><param>val</param><fbody>eval("var bo="+my.getEntity() );
+
+var title = bo.items[0].volumeInfo.title ;
+var thumb = bo.items[0].volumeInfo.imageLinks ; 
+var authors= bo.items[0].volumeInfo.authors ;
+if( thumb  ){
+    thumb = thumb.thumbnail;
+}
+
+
+cBoxInfo.setHTML( title +"&lt;br&gt;" + authors +"&lt;br&gt;" );
+cBoxPic.setImage( thumb );
+
+
+
+
+</fbody></method></methods></comp><comp><id>cBoxPic</id><base>Box</base><fontsize></fontsize><title></title><width>160</width><height>240</height><top>50</top><left>10</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody></fbody></method></methods></comp></comps>

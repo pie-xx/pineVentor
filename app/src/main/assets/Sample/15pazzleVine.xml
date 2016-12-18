@@ -1,0 +1,225 @@
+
+<comps><comp><id>cSys</id><base>System</base><img></img><methods><method><event></event><fname>init</fname><param></param><fbody>my.Board=new Array();
+my.Board.push(cBox01);
+my.Board.push(cBox02);
+my.Board.push(cBox03);
+my.Board.push(cBox04);
+my.Board.push(cBox05);
+my.Board.push(cBox06);
+my.Board.push(cBox07);
+my.Board.push(cBox08);
+my.Board.push(cBox09);
+my.Board.push(cBox10);
+my.Board.push(cBox11);
+my.Board.push(cBox12);
+my.Board.push(cBox13);
+my.Board.push(cBox14);
+my.Board.push(cBox15);
+my.Board.push(cBoxA);
+my.playmode=false;
+
+</fbody></method><method><event></event><fname>onKeyBack</fname><param></param><fbody>uug.go('/Designer/start.html');</fbody></method><method><event></event><fname>onKeyVup</fname><param></param><fbody></fbody></method><method><event></event><fname>onKeyVdown</fname><param></param><fbody></fbody></method><method><event></event><fname>onKeySearch</fname><param></param><fbody></fbody></method><method><event></event><fname>move</fname><param>box</param><fbody>if(box==undefined){
+return;
+}
+var sp=15; var sx, sy;
+var t=-1; var tx=-1; var ty=-1;
+for(var y=0; y &lt; 4; ++y ){
+for(var x=0; x &lt; 4; ++x ){
+var n=y*4+x;
+if( box.id==my.Board[n].id ){
+t=n; tx=x; ty=y;
+}
+}
+}
+
+sy= Math.floor(my.sp/4);
+sx= my.sp -sy*4;
+
+if( my.isMovable(tx,ty,sx,sy) ){
+my.swap(t);
+}
+
+
+</fbody></method><method><event></event><fname>isMovable</fname><param>tx,ty,sx,sy</param><fbody>if( tx==sx &amp;&amp; (ty-1)==sy ){
+return true;
+}
+if( tx==sx &amp;&amp; (ty+1)==sy ){
+return true;
+}
+if( (tx-1)==sx &amp;&amp; ty==sy ){
+return true;
+}
+if( (tx+1)==sx &amp;&amp; ty==sy ){
+return true;
+}
+return false;</fbody></method><method><event></event><fname>reset</fname><param></param><fbody>for(var n=0; n &lt; my.Board.length ; ++n ){
+my.Board[n].setCss("padding",0);
+my.Board[n].setCss("margin",0);
+var html = "&lt;canvas width='70' height='70' id='c"+n+"'/&gt; ";
+my.Board[n].setHTML(html);
+
+my.Board[n].n = n;
+
+var sy= Math.floor(n/4);
+var sx= n -sy*4;
+my.Board[n].tag=document.getElementById("c"+n);
+my.Board[n].tag.style.margin="0";
+my.Board[n].tag.style.padding="0";
+my.Board[n].ctx= my.Board[n].tag.getContext('2d');
+
+my.Board[n].ctx.drawImage(my.Img,
+parseInt( sx*my.Img.width/4),
+parseInt( sy*my.Img.height/4),
+parseInt( my.Img.width/4),
+parseInt( my.Img.height/4) ,
+0,0,70,70);
+}
+my.sp=15;
+my.oldd=-1;</fbody></method><method><event></event><fname>swap</fname><param>t</param><fbody>var n = my.Board[t].n;
+var sy= Math.floor(n/4);
+var sx= n -sy*4;
+
+// alert(n+": sx="+sx+" sy="+sy);
+
+my.Board[my.sp].ctx.drawImage(my.Img,
+parseInt( sx*my.Img.width/4),
+parseInt( sy*my.Img.height/4),
+parseInt( my.Img.width/4),
+parseInt( my.Img.height/4) ,
+0,0,70,70);
+
+var tmp= my.Board[my.sp].n;
+my.Board[my.sp].n = my.Board[t].n;
+my.Board[t].n = my.Board[tmp].n;
+
+var n = my.Board[t].n;
+var sy= Math.floor(n/4);
+var sx= n -sy*4;
+
+my.sp=t;
+my.Board[t].ctx.fillStyle="lightgray";
+my.Board[t].ctx.fillRect(0,0,70,70);
+
+if(my.playmode){
+for(var n=0; n &lt; my.Board.length-1 ; ++n ){
+if( my.Board[n].n!=n ){
+// alert( my.Board[n].n+"/"+n);
+return;
+}
+}
+//alert("clear!");
+setTimeout(function(){
+cVideoA.setCss("display","block");
+},1000);
+cVideoA.play();
+
+}
+</fbody></method><method><event></event><fname>setImage</fname><param>url</param><fbody>my.Img = new Image();
+my.Img.src=url;
+/* 画像が読み込まれるのを待ってから処理を続行 */
+my.Img.onload = function() {
+my.reset();
+}</fbody></method></methods></comp><comp><id>cBox01</id><base>Box</base><fontsize>48px</fontsize><title>1</title><width>60</width><height>60</height><top>40</top><left>20</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox02</id><base>Box</base><fontsize>48px</fontsize><title>2</title><width>60</width><height>60</height><top>40</top><left>90</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox03</id><base>Box</base><fontsize>48px</fontsize><title>3</title><width>60</width><height>60</height><top>40</top><left>160</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox04</id><base>Box</base><fontsize>48px</fontsize><title>4</title><width>60</width><height>60</height><top>40</top><left>230</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox05</id><base>Box</base><fontsize>48px</fontsize><title>5</title><width>60</width><height>60</height><top>110</top><left>20</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox06</id><base>Box</base><fontsize>48px</fontsize><title>6</title><width>60</width><height>60</height><top>110</top><left>90</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox07</id><base>Box</base><fontsize>48px</fontsize><title>7</title><width>60</width><height>60</height><top>110</top><left>160</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox08</id><base>Box</base><fontsize>48px</fontsize><title>8</title><width>60</width><height>60</height><top>110</top><left>230</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox09</id><base>Box</base><fontsize>48px</fontsize><title>9</title><width>60</width><height>60</height><top>180</top><left>20</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox10</id><base>Box</base><fontsize>48px</fontsize><title>10</title><width>60</width><height>60</height><top>180</top><left>90</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox11</id><base>Box</base><fontsize>48px</fontsize><title>11</title><width>60</width><height>60</height><top>180</top><left>160</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox12</id><base>Box</base><fontsize>48px</fontsize><title>12</title><width>60</width><height>60</height><top>180</top><left>230</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox13</id><base>Box</base><fontsize>48px</fontsize><title>13</title><width>60</width><height>60</height><top>250</top><left>20</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox14</id><base>Box</base><fontsize>48px</fontsize><title>14</title><width>60</width><height>60</height><top>250</top><left>90</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBox15</id><base>Box</base><fontsize>48px</fontsize><title>15</title><width>60</width><height>60</height><top>250</top><left>160</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cBoxA</id><base>Box</base><fontsize>48px</fontsize><title></title><width>60</width><height>60</height><top>250</top><left>230</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody>cSys.move(my);</fbody></method></methods></comp><comp><id>cButtonShuffle</id><base>Button</base><fontsize></fontsize><title>Shuffle</title><width></width><height></height><top>340</top><left>230</left><img></img><fix>0</fix><methods><method><event></event><fname>init</fname><param></param><fbody>my.ins=false;</fbody></method><method><event>click</event><fname>onClick</fname><param>te</param><fbody>if( my.ins){
+cTimerA.stop();
+my.ins=false;
+cSys.playmode =true;
+}else{
+cTimerA.setInterval( 100 );
+my.ins=true;
+cTimerB.setTimeout( 6000 );
+cSys.playmode =false;
+cVideoA.setCss("display","none");
+}
+</fbody></method></methods></comp><comp><id>cTimerA</id><base>Timer</base><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event></event><fname>onTimer</fname><param></param><fbody>var dirs =[0,1,2,3];
+switch( cSys.oldd ){
+case 0: dirs = [0,1,-1,3]; break;
+case 1: dirs = [0,1,2,-1]; break;
+case 2: dirs = [-1,1,2,3]; break;
+case 3: dirs = [0,-1,2,3]; break;
+}
+
+sy= Math.floor(cSys.sp/4);
+sx= cSys.sp -sy*4;
+
+if( sy==0 ){
+dirs[0]=-1;
+}
+if( sy==3 ){
+dirs[2]=-1;
+}
+if( sx==0 ){
+dirs[1]=-1;
+}
+if( sx==3 ){
+dirs[3]=-1;
+}
+
+var d=-1;
+while( -1==d){
+d= dirs[Math.floor(4*Math.random())];
+}
+cSys.oldd=d;
+
+switch(d){
+case 0: 
+cSys.move(cSys.Board[cSys.sp-4]);
+break;
+case 1: 
+cSys.move(cSys.Board[cSys.sp-1]);
+break;
+case 2: 
+cSys.move(cSys.Board[cSys.sp+4]);
+break;
+case 3: 
+cSys.move(cSys.Board[cSys.sp+1]);
+break;
+}
+</fbody></method></methods></comp><comp><id>cButtonB</id><base>Button</base><fontsize></fontsize><title>Change</title><width></width><height></height><top>0</top><left>240</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>click</event><fname>onClick</fname><param>te</param><fbody>cHttpA.searchStart(cInputA.getText());
+cSys.playmode=false;
+cVideoA.setCss("display","none");</fbody></method></methods></comp><comp><id>cInputA</id><base>Input</base><fontsize></fontsize><title>&lt;div style="border-style: double; width: 200px;"&gt;cInputA&lt;/div&gt;</title><width>200</width><height></height><top>0</top><left>20</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody>my.setText("アプガ");</fbody></method></methods></comp><comp><id>cHttpA</id><base>Http</base><methods><method><event></event><fname>init</fname><param></param><fbody>my.oldkw = "***";</fbody></method><method><event></event><fname>onSuccess</fname><param>val</param><fbody>my.videos =[];
+my.thumbs =[];
+my.descs =[];
+var vs =val.split( '{"liked"' );
+
+for(var n=1; n &lt; vs.length; ++n ){
+var video ="";
+var p = vs[n].indexOf('"videoUrl": "');
+if(p!=-1){
+var video =vs[n].substring(p+12).split('"')[1];
+}
+var thumb ="";
+p = vs[n].indexOf('"thumbnailUrl": "');
+if(p!=-1){
+var thumb =vs[n].substring(p+15).split('"')[1];
+}
+
+var desc ="";
+p = vs[n].indexOf('"description": "');
+if(p!=-1){
+var desc =vs[n].substring(p+15).split('"')[1];
+}
+
+my.videos.push( video );
+my.thumbs.push( thumb );
+my.descs.push( desc );
+
+}
+
+my.setRnd();
+</fbody></method><method><event></event><fname>searchStart</fname><param>keyword</param><fbody>if( my.oldkw != keyword ){
+my.open( "https://api.vineapp.com/posts/search/"+keyword+"?size=100");
+cBoxB.setText("searching...");
+}else{
+my.setRnd();
+}
+
+my.oldkw = keyword;</fbody></method><method><event></event><fname>setRnd</fname><param></param><fbody>my.pos =Math.floor(Math.random()* my.videos.length );
+cSys.setImage( my.thumbs[ my.pos ] );
+
+var desc =(my.pos+1)+"/"+ my.videos.length+" "+ eval( '"'+ my.descs[ my.pos ]+ '"' );
+cBoxB.setHTML( desc );
+cVideoA.setSrc( my.videos[ my.pos ] );
+</fbody></method><method><event></event><fname>onOAuthtoken</fname><param>token</param><fbody></fbody></method></methods></comp><comp><id>cBoxB</id><base>Box</base><fontsize></fontsize><title>cBoxB</title><width>180</width><height></height><top>340</top><left>20</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody>my.setCss("border","none");
+my.setBackgroundColor("transparent");</fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody></fbody></method></methods></comp><comp><id>cTimerB</id><base>Timer</base><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event></event><fname>onTimer</fname><param></param><fbody>cTimerA.stop();
+cButtonShuffle.ins=false;
+cSys.playmode =true;</fbody></method></methods></comp><comp><id>cVideoA</id><base>Video</base><width>280</width><height>280</height><top>40</top><left>20</left><fix>1</fix><src></src><methods><method><event></event><fname>init</fname><param></param><fbody>my.tag.autoplay=true;</fbody></method><method><event>ended</event><fname>onEnded</fname><param></param><fbody></fbody></method></methods></comp><comp><id>cButtonA</id><base>Button</base><fontsize></fontsize><title>Play</title><width></width><height></height><top>370</top><left>230</left><img></img><fix>0</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>click</event><fname>onClick</fname><param>te</param><fbody>cVideoA.play();</fbody></method></methods></comp></comps>

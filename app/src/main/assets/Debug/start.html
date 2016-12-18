@@ -1,0 +1,58 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+#DBval [white-space:"pre";}
+</style>
+
+<include src="skey.inc"/>
+<script>
+function init(){
+	MList.load( uug.listItem(), "item", "name", "name" );
+	MList.set("#debug", "#debug");
+}
+</script>
+</head>
+
+<body onload="init()">
+
+	<button onclick="javascript:clearDB()">clear</button>
+	<script>
+	function clearDB(){
+		if(confirm("remove '"+MList.selectedValue+"'?")){
+			uug.removeItem( MList.selectedValue );
+			DBval.innerHTML = "";
+		}
+	}
+	</script>
+
+	<comp type="select" name="MList" />
+	<script>
+	MList.onSelect = function(si){
+		DBval.innerText = uug.getItem(si);
+	};
+	MList.refresh = function(){
+		MList.load( uug.listItem(), "item", "name", "name" );
+	};
+	</script>
+	
+	<button onclick="javascript:editDB()">edit</button>
+	<script>
+	function editDB(){
+		uug.getText(MList.selectedText, DBval.innerText, "editBack","");
+	}
+	function editBack(key){
+		DBval.innerText = uug.getCache(key);
+		uug.setItem(MList.selectedText,DBval.innerText);
+	}
+	</script>
+
+	<div id="DBval"></div>
+	<button onclick="javascript:license()">license</button>
+	<script>
+	function license(){
+		uug.go("licenses.html");
+	}
+	</script>
+</body>
+</html>

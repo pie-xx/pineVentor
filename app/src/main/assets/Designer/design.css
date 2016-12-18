@@ -1,0 +1,181 @@
+@charset "UTF-8";
+
+body {
+	margin:0;
+	padding:0;
+	background-color:#eeeeee;
+}
+
+.compdiv {
+	z-index:10;
+	position: absolute;
+    background-color:white;
+    color:black;
+    border:1px solid #666;
+    padding:4px;
+}
+.buttondiv {
+	z-index:10;
+	position: absolute;
+    background-color:lightgrey;
+    color:black;  
+    border:1px solid #666;
+    padding:4px;
+	-webkit-border-radius: 10px;
+}
+.noborderdiv {
+	z-index:10;
+	position: absolute;
+    background-color:tranceparent;
+    border:none;
+    padding:0;
+}
+.selecter {
+}
+
+.Mname {
+	font-size:large;
+	font-weight: 800;
+}
+.Mevent {
+	font-size:small;
+	font-weight: 200;
+}
+#CBoard{
+	z-index:10000;
+	position: fixed;
+	top:0;
+	width:100%;
+	padding:0;	
+	background-color:lightgreen;
+}
+#DBoard {
+	width:100%;
+	margin:0;
+	padding:0;
+	height:1200px;
+}
+#NonDivBoard{
+	width:100%;
+	margin:0;
+	padding:0;
+//	height:72px;
+	border:1px solid #666;
+	background-color:lightyellow;
+}
+#MsgBoard {
+	width:100%;
+	height:30px;
+	background-color:lightyellow;
+}
+#SettingWnd {
+	z-index:20;
+	position: fixed;
+	top:40px;
+	width:50%;
+	padding:0;
+	background-color:lightgreen;
+	display:none;
+}
+.settingdiv {
+	margin:10px;
+}
+
+#CompEditWnd {
+	display:none;
+	height:200px;
+	position:fixed;
+	width:100%;
+	top:90;
+	left:0;
+	z-index:1000;
+	background-color:White;
+	border:1px solid #666;
+	padding:0px;
+}
+
+#MenuBtn{
+	background-color:pink;
+	border-style:none;
+	margin:0;
+}
+#MenuTab {
+	display:none;
+	background-color:pink;
+	height:200px;
+}
+
+#PWid {
+	font-size:x-large;
+	font-weight:800;
+}
+#PWbase {
+	font-size:large;
+	font-weight:800;
+}
+#PropBtn{
+	background-color:white;
+	border-style:none;
+	margin:0;
+}
+#PropTab {
+	display:block;
+	height:160px;
+	overflow:scroll;
+}
+#MethodBtn{
+	background-color:lightblue;
+	border-style:none;
+	margin:0;
+}
+#MethodTab {
+	display:none;
+	background-color:lightblue;
+	height:200px;
+	margin:0;padding:0;
+}
+#MethodList {
+	background-color:lightblue;
+	height:120px;
+
+	overflow:scroll;
+	border:1px solid #666;
+	padding:4px;
+}
+#MethodEditWnd{
+	display:none;
+	height:200px;
+	position:fixed;
+	width:90%;
+	top:100;
+	left:5%;
+	z-index:10000;
+	background-color:White;
+	border:1px solid #666;
+	padding:4px;
+}
+#AppMenuWnd{
+	display:none;
+	height:200px;
+	position:fixed;
+	width:90%;
+	top:100;
+	left:5%;
+	z-index:10000;
+	background-color:White;
+	border:1px solid #666;
+	padding:4px;
+}
+#CompWnd{
+	display:none;
+	height:300px;
+	position:fixed;
+	width:90%;
+	top:100;
+	left:5%;
+	z-index:10000;
+	background-color:White;
+	border:1px solid #666;
+	padding:4px;
+	overflow:scroll;
+}

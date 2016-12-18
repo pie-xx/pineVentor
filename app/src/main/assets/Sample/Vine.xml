@@ -1,0 +1,38 @@
+
+<comps><comp><id>cSys</id><base>System</base><img></img><methods><method><event></event><fname>init</fname><param></param><fbody>my.videos =[];
+</fbody></method><method><event></event><fname>onKeyBack</fname><param></param><fbody>uug.go('/Designer/start.html');</fbody></method></methods></comp><comp><id>cInputA</id><base>Input</base><fontsize></fontsize><title>&lt;div style="border-style:double;margin"&gt;cInputA&lt;/div&gt;</title><width></width><height></height><top>0</top><left>60</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method></methods></comp><comp><id>cButtonA</id><base>Button</base><fontsize></fontsize><title>Search</title><width></width><height></height><top>0</top><left>280</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>click</event><fname>onClick</fname><param>te</param><fbody>cHttpA.open( "https://api.vineapp.com/posts/search/"+cInputA.getText() +"?size=100");
+cBoxA.setText("Searching...");</fbody></method></methods></comp><comp><id>cBoxA</id><base>Box</base><fontsize></fontsize><title>cBoxA</title><width></width><height></height><top>430</top><left>10</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody>my.setCss("border","none");
+my.setBackgroundColor("transparent");</fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody></fbody></method></methods></comp><comp><id>cHttpA</id><base>Http</base><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event></event><fname>onSuccess</fname><param>val</param><fbody>cVideoA.clear();
+cSelectA.clear();
+
+eval("var bo="+my.getEntity());
+for(var n=0; n &lt; bo.data.records.length; ++n ){
+	var video =bo.data.records[n].videoUrl;
+	var desc =bo.data.records[n].description;
+	var user =bo.data.records[n].username;
+	cVideoA.add(video,user,desc);
+	cSelectA.addOption(desc,n+1);
+}
+
+cVideoA.setPos(0);</fbody></method><method><event></event><fname>onOAuthtoken</fname><param>token</param><fbody></fbody></method></methods></comp><comp><id>cVideoA</id><base>Video</base><width>320</width><height>320</height><top>90</top><left>10</left><fix>1</fix><src></src><methods><method><event></event><fname>init</fname><param></param><fbody>my.tag.autoplay=true;
+my.clear();</fbody></method><method><event></event><fname>clear</fname><param></param><fbody>my.videos=[];
+my.pos=0;</fbody></method><method><event></event><fname>add</fname><param>video,user,desc</param><fbody>var vine={};
+
+vine.video=video;
+vine.user=user;
+vine.desc=desc;
+
+my.videos.push(vine);</fbody></method><method><event></event><fname>setPos</fname><param>p</param><fbody>if( my.videos.length &lt;=0 ){
+return;
+}
+
+var vine=my.videos[p];
+cVideoA.setSrc(vine.video) ;
+
+cBoxB.setText( (parseInt(p)+1)+"/"+ my.videos.length );
+cBoxA.setHTML("&lt;b&gt;"+vine.user+"&lt;/b&gt;&lt;br/&gt;\n"+vine.desc);
+
+my.pos=parseInt(p);
+cSelectA.setIndex(p);</fbody></method><method><event>ended</event><fname>onEnded</fname><param></param><fbody></fbody></method></methods></comp><comp><id>cBoxB</id><base>Box</base><fontsize></fontsize><title>/</title><width></width><height></height><top>0</top><left>0</left><img></img><fix>0</fix><methods><method><event></event><fname>init</fname><param></param><fbody>my.setCss("border","none");
+my.setBackgroundColor("transparent");</fbody></method><method><event>touchstart</event><fname>onTouch</fname><param>te</param><fbody></fbody></method></methods></comp><comp><id>cSelectA</id><base>Select</base><title></title><fontsize></fontsize><width></width><height></height><top>40</top><left>10px</left><radius></radius><img></img><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>change</event><fname>onChange</fname><param></param><fbody>cVideoA.setPos(my.getIndex());</fbody></method></methods><select></select></comp><comp><id>cButtonB</id><base>Button</base><fontsize></fontsize><title>play</title><width></width><height></height><top>430</top><left>270</left><img></img><fix>1</fix><methods><method><event></event><fname>init</fname><param></param><fbody></fbody></method><method><event>click</event><fname>onClick</fname><param>te</param><fbody>cVideoA.play();
+</fbody></method></methods></comp></comps>

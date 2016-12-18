@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\pie\AndroidstudioProjects\pineVentor\app\libs\twitter4j-stream-3.0.5.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="165a96495e17eea21317e751dbb58017dfa5586b">
+        <dex dex="C:\Users\pie\AndroidstudioProjects\pineVentor\app\build\intermediates\pre-dexed\debug\twitter4j-stream-3.0.5_c4ac0d501d99d5af9d53b025edf912b5313fdf9a.jar" />
+    </item>
+    <item
+        jar="C:\Users\pie\AndroidstudioProjects\pineVentor\app\libs\javase.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="781e45c7b4ce95e620e943338725f8b2aa47abc7">
+        <dex dex="C:\Users\pie\AndroidstudioProjects\pineVentor\app\build\intermediates\pre-dexed\debug\javase_813658dc70835097da788dc6483f98f63a2765b4.jar" />
+    </item>
+    <item
+        jar="C:\Users\pie\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-v4\18.0.0\support-v4-18.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="44ec51e9d395a47aab135e5e1b556c0007442156">
+        <dex dex="C:\Users\pie\AndroidstudioProjects\pineVentor\app\build\intermediates\pre-dexed\debug\support-v4-18.0.0_e1f11b9f43c6f61250d3a0de12634ef1491fc60f.jar" />
+    </item>
+    <item
+        jar="C:\Users\pie\AndroidstudioProjects\pineVentor\app\libs\twitter4j-async-3.0.5.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="555b786793313a57294cade0d520bada8a30c1d8">
+        <dex dex="C:\Users\pie\AndroidstudioProjects\pineVentor\app\build\intermediates\pre-dexed\debug\twitter4j-async-3.0.5_a25a52e60f5762599d0ef11f6dddb2c52aaac84f.jar" />
+    </item>
+    <item
+        jar="C:\Users\pie\AndroidstudioProjects\pineVentor\app\libs\core.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="69ab751723c7f7c8a01fddb1d169a93160fadca7">
+        <dex dex="C:\Users\pie\AndroidstudioProjects\pineVentor\app\build\intermediates\pre-dexed\debug\core_3d34d380d8f3aa8b50392ec347cfb6b094750d88.jar" />
+    </item>
+    <item
+        jar="C:\Users\pie\AndroidstudioProjects\pineVentor\app\libs\twitter4j-media-support-3.0.5.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="bb1f8304e38c7343f7861b92215676d10981fd3c">
+        <dex dex="C:\Users\pie\AndroidstudioProjects\pineVentor\app\build\intermediates\pre-dexed\debug\twitter4j-media-support-3.0.5_62f58280d2f8d7561858ca61651badf5397e40a3.jar" />
+    </item>
+    <item
+        jar="C:\Users\pie\AndroidstudioProjects\pineVentor\app\libs\twitter4j-examples-3.0.5.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="91c9334b918ef0cc8a985f61f4b082b27addb9a7">
+        <dex dex="C:\Users\pie\AndroidstudioProjects\pineVentor\app\build\intermediates\pre-dexed\debug\twitter4j-examples-3.0.5_a2556124780b7150f7785375e24396db37cf725b.jar" />
+    </item>
+    <item
+        jar="C:\Users\pie\AndroidstudioProjects\pineVentor\app\libs\twitter4j-core-3.0.5.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="5999e1915b61b30c9fc40d5d1971906bb68aca6c">
+        <dex dex="C:\Users\pie\AndroidstudioProjects\pineVentor\app\build\intermediates\pre-dexed\debug\twitter4j-core-3.0.5_6f5c2e55ad8189ba48ea4e08695ad39074af77ec.jar" />
+    </item>
+
+</items>
